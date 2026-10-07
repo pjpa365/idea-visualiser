@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Connecting : connect
+    Connecting --> Connected : ack
+    Connecting --> Error : timeout
+    Connected --> Transferring : send
+    Transferring --> Connected : done
+    Transferring --> Error : checksum failed
+    Connected --> Idle : disconnect
+    Error --> Idle : reset
+
+    note right of Transferring : v2 adds data transfer
+
+    classDef errorState fill:#fdd,stroke:#c00,color:#900
+    class Error errorState

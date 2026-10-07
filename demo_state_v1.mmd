@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Connecting : connect
+    Connecting --> Connected : ack
+    Connecting --> Error : timeout
+    Connected --> Idle : disconnect
+    Error --> Idle : reset
+
+    classDef errorState fill:#fdd,stroke:#c00,color:#900
+    class Error errorState
