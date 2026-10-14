@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant B as Badge reader
+    participant C as Controller
+    participant S as Access server
+    participant M as Motor
+    B->>C: badge number
+    C->>S: is badge allowed?
+    alt allow
+        S-->>C: allow
+        C->>M: release lock, open
+        M-->>C: fully open
+    else deny
+        S-->>C: deny
+        C->>B: red light
+    else no answer within 2 s
+        Note over C: treated as deny
+        C->>B: red light

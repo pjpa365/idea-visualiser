@@ -1,0 +1,27 @@
+flowchart TD
+    PWR([Power on]):::role_start
+    SELF["❓ Self-test before boot ❓"]:::role_suggestion
+    BOOT[Bootloader]
+    CFG[(Config in flash)]:::role_data
+    MCU[MCU main loop]:::role_hardware
+    TICK[/10 ms tick/]:::role_timing
+    I2C{{I2C bus}}:::role_interface
+    SENS[Temperature sensor]:::role_hardware
+    CHK{Value OK?}
+    FAULT[Bus fault]:::role_error
+    LOW[Low battery mode]:::role_warning
+    WD[Watchdog reset]:::role_safe
+    OTA["Firmware update (not in v1)"]:::role_inactive
+    LOG["Send log to host [WDYT?]"]:::role_suggestion
+    OFF([Shutdown]):::role_end
+    subgraph EXT[Outside the device]
+        HOST[Host PC]:::role_external
+    end
+    PWR --> SELF --> BOOT --> CFG --> MCU
+    TICK --> MCU
+    MCU --> I2C --> SENS --> CHK
+    CHK -- yes --> LOG --> HOST
+    CHK -- "no: CRC error" --> FAULT --> WD --> PWR
+    MCU -. "battery < 3.3 V" .-> LOW --> OFF
+    MCU -.-> OTA
+    style EXT fill:#F1ECE2,stroke:#9C8A68,color:#45391F

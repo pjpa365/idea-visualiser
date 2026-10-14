@@ -19,6 +19,8 @@ Tell the user which mode you are in, in one line.
 - **Full mode**: you work in a folder on the user's computer (Claude Code, the Code tab of Claude Desktop, Cowork). Files are written to folders; a record file keeps the history.
 - **Limited mode**: a chat whose files live in a temporary sandbox (claude.ai, Claude Desktop chat, mobile; uploads in a path such as `/mnt/user-data/uploads`). Every file is a download; the history is this chat. See section 6.
 
+In full mode, also run `node <skill>/scripts/version-check.mjs` once at the start (it checks at most once a day and never blocks). When it says "action needed", pass its lines to the user in plain words, then carry on with the request.
+
 ## 2. What to do
 
 Pick the workflow from the situation, then read that workflow file and follow it:

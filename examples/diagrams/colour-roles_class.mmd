@@ -1,0 +1,28 @@
+classDiagram
+    class SensorDriver:::role_interface {
+        +read() int
+    }
+    class TemperatureSensor:::role_hardware {
+        +address
+    }
+    class RingBuffer:::role_data {
+        +push(value)
+    }
+    class Scheduler:::role_timing {
+        +tick()
+    }
+    class Watchdog:::role_safe {
+        +kick()
+    }
+    class OtaUpdater:::role_inactive {
+        +start()
+    }
+    class Calibrator:::role_suggestion {
+        +run()
+    }
+    SensorDriver --> TemperatureSensor : reads
+    SensorDriver --> RingBuffer : stores
+    Scheduler --> SensorDriver : triggers
+    Watchdog --> Scheduler : monitors
+    OtaUpdater ..> RingBuffer
+    Calibrator ..> SensorDriver

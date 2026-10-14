@@ -1,0 +1,23 @@
+sequenceDiagram
+    box rgb(241,236,226) Outside the device
+        participant Host as Host PC
+    end
+    box rgb(251,230,218) Device
+        participant MCU
+        participant Sensor as Temperature sensor
+    end
+    Host->>MCU: Start measuring
+    rect rgb(252,228,243)
+        Note over MCU,Sensor: Every 10 ms (timing band)
+        MCU->>Sensor: Read temperature (I2C)
+        Sensor-->>MCU: Value
+    end
+    rect rgb(253,237,235)
+        MCU->>Sensor: Read temperature
+        Sensor--xMCU: NACK (error band)
+    end
+    rect rgb(242,251,208)
+        Note over Host,MCU: ❓ Should the host confirm each value? [WDYT?]
+        MCU->>Host: Value
+    end
+    Host->>MCU: Stop

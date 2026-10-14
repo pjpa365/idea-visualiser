@@ -1,0 +1,11 @@
+erDiagram
+    DEVICE ||--o{ MEASUREMENT : records
+    DEVICE ||--|| CONFIG : uses
+    MEASUREMENT }o--|| SENSOR : "comes from"
+    DEVICE ||--o{ ERROR_LOG : writes
+    DEVICE }o--o| CLOUD_ACCOUNT : "uploads to (not in v1)"
+    DEVICE:::role_hardware
+    CONFIG:::role_data
+    ERROR_LOG:::role_error
+    CLOUD_ACCOUNT:::role_inactive
+    SENSOR:::role_hardware

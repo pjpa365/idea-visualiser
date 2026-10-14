@@ -1,0 +1,2 @@
+{ "diagramFolder": "diagrams", "versioning": "on", "types": ["state", "sequence"], "rework": true, "textFolder": "diagrams/text",
+  "previous": { "door-controller_state_v1.mmd": "door-controller_state_v2.mmd", "door-controller_sequence_v1.mmd": "door-controller_sequence_v2.mmd" } }

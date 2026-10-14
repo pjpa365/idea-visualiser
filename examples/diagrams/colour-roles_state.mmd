@@ -1,0 +1,28 @@
+stateDiagram-v2
+    [*] --> PowerOn
+    PowerOn --> Idle
+    Idle --> Measuring : every 10 ms
+    Measuring --> Idle : value stored
+    Measuring --> SensorFault : CRC error
+    SensorFault --> SafeState : 3 retries failed
+    Measuring --> LowBattery : below 3.3 V
+    LowBattery --> Idle : charged
+    SafeState --> Shutdown
+    Shutdown --> [*]
+    Idle --> Updating : not in v1
+    state Updating {
+        [*] --> Download
+        Download --> Verify
+        Verify --> [*]
+    }
+    Idle --> Calibrate : [WDYT?]
+    Calibrate --> Idle
+    note right of Calibrate : ❓ Not sure if calibration is a separate state or part of Measuring
+    class PowerOn role_start
+    class Shutdown role_end
+    class SensorFault role_error
+    class LowBattery role_warning
+    class SafeState role_safe
+    class Measuring role_timing
+    class Updating role_inactive
+    class Calibrate role_suggestion

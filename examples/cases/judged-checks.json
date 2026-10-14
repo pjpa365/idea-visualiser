@@ -1,0 +1,38 @@
+{
+  "about": "Judged checks for the visualize-idea test cases: graded by an independent helper that reads the outputs (and, for the baseline comparison, is not told which run used the skill). Firm checks are done by firm-checks.mjs.",
+  "common_create": [
+    "Every diagram element comes from a sentence of the input text, or is clearly marked as an assumption/suggestion with a reason; no behaviour, value or element is presented as if the text said it when it does not",
+    "Gaps in the text stay visible or are marked as suggestions; they are not filled in silently",
+    "The diagram types chosen answer the user's question and follow the directives when given",
+    "The final message to the user is plain (no developer jargon needed), lists the files, the assumptions and whether the diagrams were checked, and says how to view them",
+    "Every assumption is visible inside the diagram itself (suggestion styling, a ❓ or a note), not only in the chat message or a hidden file"
+  ],
+  "cases": {
+    "01-door-controller-create": [
+      "The state diagram contains the states of the text (Locked, Opening, Open, Closing, Fault, and the start-up/self-test) with the transitions the text describes, including deny and the 2-second no-answer treated as deny",
+      "The jam is not given invented behaviour: the text only says the sensor reports a blocked door, so any Jammed state or reaction is marked as an assumption/suggestion",
+      "The sequence diagram shows badge reader, controller, access server and motor exchanging the opening messages, with allow / deny / no answer within 2 s as alternatives",
+      "The project's terms are used: 'access server' (not backend/cloud) and 'badge' (not card)"
+    ],
+    "02-purchase-approval-create": [
+      "A real swimlane diagram (Mermaid swimlane type) is drawn with one lane per role: employee, team lead, Finance, Purchasing (finance manager as lane or step for the escalation). A flowchart with one group per role does not count.",
+      "The 5,000 euro decision is a decision with both outcomes labelled, and Finance's budget check has both outcomes",
+      "After a team-lead rejection the employee is informed and the procedure ends; after a Finance rejection the employee is informed (the text names no explicit end there, so an end is either absent or marked as assumed)",
+      "The escalation after 5 working days to the finance manager is shown, and nothing the text does not say is added as fact (e.g. what the finance manager then does is not invented)"
+    ],
+    "03-sensor-link-create": [
+      "The packet diagram has start byte (8 bits), frame type (8), sequence number (8), payload length (8), a 4-byte payload (32) and CRC-16 (16): 80 bits, contiguous, lowest bit first",
+      "The sequence diagram shows joining: HELLO with node id, HELLO_ACK with time slot, the 500 ms timeout with at most 3 attempts and the 60-second sleep after 3 failures",
+      "The sequence diagram shows sending data: DATA, DATA_ACK with the same sequence number, NACK on a CRC error with the node repeating the frame at most twice, then dropping it",
+      "BYE is shown as a message without an answer from the gateway, OR it is left out because the user asked only for joining and sending data AND the user is told it was left out"
+    ],
+    "04-door-controller-rework": [
+      "The jam comment is applied: the text copy describes in §3.3 (in the text's own style) that the motor stops, the door opens fully again and the jam is reported to the access server, and the Jammed state is no longer drawn as a suggestion",
+      "The doorway comment is applied: the text copy says the controller checks that the doorway is clear before closing, and no detail is invented for it (how it checks or what happens if it is not clear is either left unsaid or marked [?])",
+      "The self-test comment is handled as a diagram-only change: Self-test is drawn as a composite state with the three checks (lock, motor, badge reader), without unnecessary text changes",
+      "The watchdog question is answered to the user; no unasked change is made for it (at most a [?] point or a proposal)",
+      "The broken sequence diagram is fixed in v2 (the alt block is closed) and the error is reported as handled",
+      "No text outside the commented topics was changed, and counting/listing sentences still fit"
+    ]
+  }
+}

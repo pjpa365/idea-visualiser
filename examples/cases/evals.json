@@ -1,0 +1,13 @@
+{
+  "skill_name": "visualize-idea",
+  "evals": [
+    { "id": 1, "name": "01-door-controller-create", "prompt": "Please visualize specs/door-controller.md.",
+      "expected_output": "State and sequence diagrams (directives), versioned _v1, in diagrams/; jam drawn as a suggestion/assumption, not invented behaviour; record file with full trace; all diagrams pass the Mermaid 12.1 check.", "files": ["cases/01-door-controller-create/project"] },
+    { "id": 2, "name": "02-purchase-approval-create", "prompt": "Can you draw this purchase approval procedure (specs/purchase-approval.md)? I mainly want to see who does what.",
+      "expected_output": "A swimlane diagram with lanes Employee, Team lead, Finance, Purchasing (and possibly finance manager), the 5,000 euro decision, escalation; no versioning; default folder specs/diagrams.", "files": ["cases/02-purchase-approval-create/project"] },
+    { "id": 3, "name": "03-sensor-link-create", "prompt": "Visualize specs/sensor-link-protocol.md. I want to see the frame layout and the message exchange when a node joins and sends data.",
+      "expected_output": "A packet diagram with contiguous fields (4-byte payload example, 2-byte CRC) and a sequence diagram with HELLO retries, DATA/DATA_ACK, NACK repeat; autonumber.", "files": ["cases/03-sensor-link-create/project"] },
+    { "id": 4, "name": "04-door-controller-rework", "prompt": "I commented on the diagrams in the viewer and pressed Save. Please process my comments.",
+      "expected_output": "Text copy with [+] additions (jam behaviour, doorway check) and [?] open points (how the doorway is checked); v2 state and sequence diagrams as a local change (ids kept), self-test as a composite state, sequence error fixed, watchdog question answered; comments file deleted; learning notes written.", "files": ["cases/04-door-controller-rework/project"] }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "name": "door-controller",
+      "input": "specs/door-controller.md",
+      "inputHash": "8011b66bb5eb1cd1",
+      "directives": "specs/door-controller-directives.md",
+      "domains": ["embedded-software", "network-protocols"],
+      "settings": { "versioning": "on", "textVersioning": "on", "showPlan": "no", "diagramChanges": "local" },
+      "rounds": [
+        { "round": 1, "date": "2026-10-13", "kind": "create", "from": "specs/door-controller.md",
+          "wrote": ["door-controller_state_v1.mmd", "door-controller_sequence_v1.mmd"] }
+      ],
+      "diagrams": [
+        {
+          "file": "door-controller_state_v1.mmd", "type": "state", "version": 1, "round": 1,
+          "trace": [
+            { "id": "PowerOn", "element": "state Power on", "source": "§2 \"After power-on the controller runs a self-test\"" },
+            { "id": "SelfTest", "element": "state Self-test", "source": "§2 \"runs a self-test of the lock, the motor and the badge reader\"" },
+            { "id": "Locked", "element": "state Locked", "source": "§2 \"the door is locked and the controller goes to the Locked state\"" },
+            { "id": "Fault", "element": "state Fault", "source": "§2 \"When the self-test fails, the controller goes to the Fault state\"; §4 \"Only a power-on restart leaves the Fault state\"" },
+            { "id": "Opening", "element": "state Opening", "source": "§3.1 \"releases the lock and starts the motor to open the door (Opening state)\"" },
+            { "id": "Open", "element": "state Open", "source": "§3.1 \"When the door is fully open, the motor stops and the controller is in the Open state\"" },
+            { "id": "Closing", "element": "state Closing", "source": "§3.2 \"starts the motor to close the door (Closing state)\"" },
+            { "id": "Jammed", "element": "state Jammed (suggestion)", "assumption": "§3.3 names a jam sensor that reports a blocked door while moving, but the text does not say what the controller does then" },
+            { "id": "Locked->Locked", "element": "line deny or no answer in 2 s", "source": "§3.1 \"On deny the controller stays in the Locked state\"; \"within 2 seconds, the request is treated as deny\"" },
+            { "id": "Open->Closing", "element": "line after 10 s", "source": "§3.2 \"The door stays open for 10 seconds\"" }
+          ]
+        },
+        {
+          "file": "door-controller_sequence_v1.mmd", "type": "sequence", "version": 1, "round": 1,
+          "trace": [
+            { "id": "B", "element": "participant Badge reader", "source": "§3.1 \"the badge reader sends the badge number to the controller\"" },
+            { "id": "C", "element": "participant Controller", "source": "§3.1" },
+            { "id": "S", "element": "participant Access server", "source": "§3.1 \"The controller asks the access server whether the badge is allowed\"" },
+            { "id": "M", "element": "participant Motor", "source": "§3.1 \"starts the motor to open the door\"" }
+          ]
+        }
+      ],
+      "textCopies": [],
+      "changes": []
+    }
+  ]
+}

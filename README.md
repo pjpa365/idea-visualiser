@@ -13,7 +13,9 @@ So your comments improve not only the drawing but the **input text itself**. You
 
 **Built-in domain knowledge.** The skill has domain packs that help it draw each field in its own terms: embedded software, network protocols, system architecture, business processes, business software, user interfaces, planning, and a general pack for anything else. The skill only visualizes: it never judges whether your text is complete; you see that in the diagrams. More packs, and extension skills that build on this one, can be added later.
 
-**It learns.** While processing your comments, the skill notes which comments were caused by its own drawing (not by gaps in your text) in a learning-notes file in your home folder (`visualize-idea/learning-notes.md`). These notes feed an improvement loop: they are turned into better drawing rules, tested against the previous version automatically, and published as a new version.
+**It learns, and you can improve it yourself.** While processing your comments, the skill notes which comments were caused by its own drawing (not by gaps in your text) in a learning-notes file in your home folder (`visualize-idea/learning-notes.md`). A second skill in the same plugin, `visualize-idea-improve`, turns those notes into better drawing rules in your own copy of this repository, tests the new version against the old one automatically, and saves it after your "yes". You can offer good improvements back to this repository. See [Improve the skill](#improve-the-skill-claude-code-only).
+
+**Stays up to date.** In Claude Code the skill checks once a day whether a newer version exists, and tells you what to do.
 
 ## What you need
 
@@ -56,9 +58,10 @@ Add the plugin once on claude.ai or Claude Desktop (section 2). It belongs to yo
 The `skills` tool from [skills.sh](https://skills.sh) copies the skill folder into the tool's skills folder:
 
 ```
-npx skills add pjpa365/idea-visualiser
+npx skills add pjpa365/idea-visualiser --skill visualize-idea
 ```
 
+- `--skill visualize-idea` takes only the work loop; the improvement loop works only in Claude Code with the plugin (see [Improve the skill](#improve-the-skill-claude-code-only)).
 - Add `-g` to install it for all your projects instead of only the current one, and `-a claude-code` (or `-a cursor`, `-a codex`, …) to choose the tool.
 - Updates: `npx skills update`.
 - The skill is written and tested for Claude. Other tools that read `SKILL.md` skills should be able to follow it. *(Not yet tested in other tools.)*
@@ -101,6 +104,33 @@ Without any extra file the skill works with sensible defaults. Two optional plai
 
 Defaults without these files: the diagrams go to a folder `diagrams` next to the input text; versioning is off; Claude shows its plan before it changes the text; after a round of comments only the changed parts of a diagram are redrawn (tick **Redraw completely** in the viewer for a full redraw).
 
+## Examples
+
+The `examples` folder shows what the skill works with and what it makes:
+
+- `examples/diagrams/`: one diagram per type, with colour roles. Open the folder in the viewer to look around.
+- `examples/cases/`: four complete examples (a door controller, a purchase approval, a sensor protocol, and a round of comments on the door controller), each with its text, project file and directives file. Copy one `project` folder somewhere and ask Claude to visualize its text. These cases are also the test set of the improvement loop.
+
+## Improve the skill (Claude Code only)
+
+Improving the skill needs **Claude Code** (terminal, IDE, or the Code tab of Claude Desktop), with git and Node.js, and a free GitHub account. It does not work in claude.ai, the Chat tab of Claude Desktop or the mobile app; those keep using the version you installed.
+
+1. **Make your own copy of this repository**, once:
+   - **Fork** (public): on GitHub, press **Fork** at the top of this page. Simplest; offering your improvements back is one click.
+   - **Private copy**: on GitHub, create a new, empty **private** repository (**+** → **New repository** → **Private**, nothing else). Claude fills it with this repository in the next step. (GitHub has no private forks.)
+2. In Claude Code, ask: *"Set up my copy of the visualize-idea skill"*. Claude asks which repository and which folder on your computer, and links your copy to this original.
+3. **Install the plugin from your copy** instead of this repository: `/plugin marketplace add <your-name>/<your-repository>`, then `/plugin install visualize-idea@idea-visualiser`. (Remove the original first with `/plugin marketplace remove idea-visualiser` if you added it.)
+4. Use the skill as usual. When notes have collected, ask: *"Improve the visualize-idea skill"*. Claude turns your learning notes into general rules, tests old against new on the examples, and asks you once: *"Save as version …?"*. On "yes" it saves to your copy; then update the plugin (`/plugin marketplace update`, `/plugin update visualize-idea`).
+5. Optional: ask *"Propose my improvements to the original"*. You get a link to a pull request; the owner of this repository reviews it, and when it is accepted everyone gets it.
+
+## Your own copy: getting the latest version
+
+Your fork or private copy was copied **once** from this repository. It does not follow new versions by itself.
+
+- **Automatic hint**: in Claude Code, the skill checks once a day and tells you when this original has changes your copy does not have yet, or when your installed plugin is older than your copy.
+- **Update**: ask Claude *"Update my copy from the original"*. It brings the new changes into your copy (when you and the original changed the same lines, Claude merges them and asks if unsure) and saves your copy. Then update the installed plugin: `/plugin marketplace update`, `/plugin update visualize-idea`, and restart Claude Code.
+- **By hand** (in your copy's folder): `git fetch upstream`, `git merge upstream/main`, `git push`. A public fork can also use **Sync fork** on its GitHub page.
+
 ## License
 
 MIT, see `LICENSE`. The open-source libraries used are listed in `THIRD-PARTY-NOTICES.md`; the full license texts are at the end of the viewer (`index.html`) and of the check script.
@@ -108,5 +138,8 @@ MIT, see `LICENSE`. The open-source libraries used are listed in `THIRD-PARTY-NO
 ## What is in this repository
 
 - `index.html`: the newest viewer (the GitHub Pages main address); `v1/`, `v2/`, …: every viewer version.
-- `plugins/visualize-idea/`: the plugin with the skill, its scripts and its own copy of the viewer.
+- `plugins/visualize-idea/`: the plugin, with two skills: `visualize-idea` (the work loop, with its scripts and its own copy of the viewer) and `visualize-idea-improve` (the improvement loop). Its change log is `plugins/visualize-idea/CHANGELOG.md`.
+- `examples/`: example diagrams and the example cases (also the improvement loop's test set).
 - `.claude-plugin/marketplace.json`: makes this repository a plugin marketplace.
+
+The viewer and the check script are built from program code kept in a separate developer repository; changes to the skills' text, the examples and this README are made here.

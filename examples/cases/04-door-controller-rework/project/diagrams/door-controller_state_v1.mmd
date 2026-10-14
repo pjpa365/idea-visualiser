@@ -1,0 +1,23 @@
+stateDiagram-v2
+    state "Power on" as PowerOn
+    state "Self-test" as SelfTest
+    state "❓ Jammed" as Jammed
+    [*] --> PowerOn
+    PowerOn --> SelfTest : power-on
+    SelfTest --> Locked : self-test passed
+    SelfTest --> Fault : self-test failed
+    Locked --> Opening : allow / release lock, start motor
+    Locked --> Locked : deny or no answer in 2 s
+    Opening --> Open : fully open / stop motor
+    Open --> Closing : after 10 s
+    Closing --> Locked : fully closed / engage lock
+    Opening --> Jammed : jam sensor
+    Closing --> Jammed : jam sensor
+    Fault --> PowerOn : power-on restart
+    note right of Jammed
+        The text says the jam sensor reports a blocked door,
+        but not what the controller does then.
+    end note
+    class PowerOn role_start
+    class Fault role_error
+    class Jammed role_suggestion

@@ -1,0 +1,33 @@
+swimlane-beta
+    subgraph Customer ["Customer"]
+        Order(["Place order"])
+        Pay["Pay invoice"]
+    end
+    subgraph Sales ["Sales"]
+        Check{"Credit OK?"}
+        Reject["Reject order"]
+        Remind["Send reminder"]
+        Advice["❓ Ask for prepayment"]
+    end
+    subgraph Warehouse ["Warehouse"]
+        Stock[("Stock records")]
+        Ship["Ship goods"]
+        Carrier["Carrier picks up"]
+        Done(["Order closed"])
+    end
+    Order --> Check
+    Check -->|"yes"| Ship
+    Check -->|"no"| Reject
+    Reject -.-> Advice
+    Ship --> Stock
+    Ship -->|"delivery note"| Carrier
+    Carrier --> Pay
+    Pay -->|"late"| Remind
+    Pay --> Done
+    class Order role_start
+    class Done role_end
+    class Reject role_error
+    class Remind role_warning
+    class Stock role_data
+    class Carrier role_external
+    class Advice role_suggestion
