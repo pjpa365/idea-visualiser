@@ -1,14 +1,25 @@
 # Idea Visualizer: the `visualize-idea` skill
 
-Turns a specification, idea or any text into Mermaid diagrams. You look at the diagrams in the Idea Visualizer viewer, click on what is wrong or missing and write a comment, and Claude uses your comments to improve the text. Repeat until the text is right.
+**See your text, then improve it by commenting on the picture.** For visual thinkers, who spot a missing step, a dead end or an unclear hand-over faster in a diagram than in pages of text.
 
-The skill never changes your own text: changes go into a copy, with `[+]` before each addition of the latest round and `[?]` before each open point for you to answer.
+It works as a loop:
+
+1. **Text → diagrams.** Claude turns your specification, idea, process or plan into Mermaid diagrams (flowchart, swimlane, sequence, state, ER, class, packet, XY chart). Every element traces back to a sentence in your text; anything Claude had to assume is marked with ❓.
+2. **Diagrams → comments.** You open the diagrams in the Idea Visualizer viewer and click any box, line or message to comment on it: "this is missing", "what happens after a timeout?", "this should be a final state".
+3. **Comments → better text *and* better diagrams.** Claude places each comment at the right spot in the text, writes the change into a copy of your text in its own style, and draws new diagrams from that improved text.
+4. Repeat until the text is right, then say *"the text is final"*.
+
+So your comments improve not only the drawing but the **input text itself**. Your original is never changed: changes go into a copy, with `[+]` before each addition of the latest round and `[?]` before each open point for you to answer.
+
+**Built-in domain knowledge.** The skill has domain packs that help it draw each field in its own terms: embedded software, network protocols, system architecture, business processes, business software, user interfaces, planning, and a general pack for anything else. The skill only visualizes: it never judges whether your text is complete; you see that in the diagrams. More packs, and extension skills that build on this one, can be added later.
+
+**It learns.** While processing your comments, the skill notes which comments were caused by its own drawing (not by gaps in your text) in a learning-notes file in your home folder (`visualize-idea/learning-notes.md`). These notes feed an improvement loop: they are turned into better drawing rules, tested against the previous version automatically, and published as a new version.
 
 ## What you need
 
 - A paid Claude plan (Pro, Max, Team or Enterprise) to add plugins in the Claude apps. Claude Code works with any Claude Code login.
 - **Chrome** (or Edge) for the viewer.
-- **Node.js** (only in Claude Code and the Code tab of Claude Desktop): the skill uses it to check every diagram before you see it. Without Node.js the skill still works, but the diagrams are not machine-checked.
+- **Node.js** (only in Claude Code and the Code tab of Claude Desktop): before you see a diagram, the skill reads it with the same Mermaid version as the viewer and checks its own rules, so you get no diagram that fails to load. Without Node.js the skill still works, but the diagrams are not checked first.
 
 ## Install: pick the AI tool you use
 
@@ -66,16 +77,33 @@ To look at Mermaid files (`.mmd`) without the skill: open **https://pjpa365.gith
 3. Click an element to comment on it, press **Save**, then tell Claude: *"Process my comments"*. In limited mode: attach the saved `UserComments-Mermaid.md` to the chat.
 4. Repeat until the text is right, then say: *"The text is final"*. Claude lists any open points left and writes a final copy without markers. You copy that text into your original yourself.
 
-Optional files (templates are in the skill's `templates` folder; ask Claude for one):
+## Steer the result: project file and directives file
 
-- `visualize-project.md` in the project folder: folders, versioning, project background, terms, diagram preferences.
-- `<input-name>-directives.md` next to the input text: how to read and draw that one text.
+Without any extra file the skill works with sensible defaults. Two optional plain-text files let you steer it, so you don't have to repeat the same wishes in every request, and every round of the loop is drawn the same way.
 
-Defaults: the diagrams go to a folder `diagrams` next to the input text; versioning is off.
+| | Project file | Directives file |
+|---|---|---|
+| **Name and place** | `visualize-project.md` in your project folder | `<text-name>-directives.md` next to the text, e.g. `door-controller-directives.md` for `door-controller.md` |
+| **Applies to** | every text in the project | one text |
+| **Holds** | project background, domain packs to use, terms and naming, diagram preferences (size, direction, types to prefer or avoid), folders, versioning, whether to show a plan before the text is changed, local change or full redraw | the name for the diagrams, which diagram types, scope (what to draw and what to leave out), level of detail, colour roles or fixed colours, domain, and any project setting you want different for this text |
+| **Advantage** | Claude knows the context and your words, so diagrams use your terms and fit the project | each text is drawn exactly as you want, the same in every round |
+
+- **Priority**: directives file > project file > defaults. When they contradict each other or the text, Claude asks.
+- **Format**: plain text with headings; free wording is fine. Fill in only what you need and delete the rest. Ask Claude *"give me the project file template"* or *"give me the directives template"* to start.
+- **Never changed**: like your text, these files are only read, never changed by the skill.
+
+**How to use them when calling the skill**
+
+- Full mode (Claude Code): just put them in their place. *"Visualize specs/door-controller.md"* finds `visualize-project.md` in the project folder and `specs/door-controller-directives.md` by itself.
+- Another name or place: say so, e.g. *"Visualize specs/door-controller.md with directives notes/door-rules.md and project file docs/project.md"*.
+- Limited mode (claude.ai, Desktop chat, mobile): attach the files to the chat together with the text.
+- Quick one-off wishes can also go in the request itself: *"Visualize specs/door-controller.md as a state diagram only, overview level"*.
+
+Defaults without these files: the diagrams go to a folder `diagrams` next to the input text; versioning is off; Claude shows its plan before it changes the text; after a round of comments only the changed parts of a diagram are redrawn (tick **Redraw completely** in the viewer for a full redraw).
 
 ## License
 
-MIT, see `LICENSE`. The viewer and the check script include open-source parts, unchanged and each under its own license. The main one is Mermaid (MIT); the ELK layout (elkjs) is under the Eclipse Public License 2.0, with its source code at https://github.com/kieler/elkjs. The full list with all license texts is in `THIRD-PARTY-NOTICES.md`, and the same notices are at the end of `index.html` and of the check script.
+MIT, see `LICENSE`. The open-source libraries used are listed in `THIRD-PARTY-NOTICES.md`; the full license texts are at the end of the viewer (`index.html`) and of the check script.
 
 ## What is in this repository
 

@@ -2,6 +2,8 @@
 
 Written for **Mermaid 12.1.0**, the version inside the viewer and the check script. Read section 1–3 always, then only the sections of the diagram types you draw.
 
+This file is the project's single collection of Mermaid rules (from the official documentation, our own tests, community guides and research; sources in section 14). When the Mermaid version changes, every rule here is checked again.
+
 ## Contents
 1. Every diagram
 2. Readability
@@ -16,6 +18,7 @@ Written for **Mermaid 12.1.0**, the version inside the viewer and the check scri
 11. XY chart
 12. Types not used
 13. Choosing the diagram type
+14. Sources
 
 ## 1. Every diagram
 
@@ -27,6 +30,7 @@ Written for **Mermaid 12.1.0**, the version inside the viewer and the check scri
 - **Reserved words**: never use `end`, `graph`, `subgraph`, `style`, `class`, `classDef`, `click`, `default`, `direction`, `state`, `note` as an id or bare word. In sequence messages write `End`, not `end`.
 - Inside text: `#35;` for `#`, `#59;` for `;`, `#quot;` for `"`.
 - `%%` comments only on their own line.
+- Line breaks in labels behave differently per type: prefer short labels; `<br>` only in flowchart labels.
 - **Nothing about looks in the file**: no front matter, no `%%{init}%%`, no theme, font, look or layout. The viewer decides; a font in the file even makes Mermaid fall back to a serif font.
 - **No colours** except colour roles (see `colour-roles.md`) and hard colours a directive asks for. No `linkStyle`, no `click`.
 - Clean text copied from PDF or Word (invisible characters break parsing).
@@ -48,7 +52,7 @@ Written for **Mermaid 12.1.0**, the version inside the viewer and the check scri
 
 - Before checking: all labels quoted, no reserved words, every id used in a link is defined, every block (`subgraph`, `alt`, `loop`, `state {}`) closed.
 - Run `node <skill>/scripts/check-mermaid.mjs <files>`. It parses with Mermaid 12.1.0 and checks the firm rules (file name, beta types, no look settings, no coloured lines, known role names, sequence role bands, packet fields).
-- Fix and check again, at most 3 rounds. Still failing → say so honestly, with the error; never hand over a diagram as "checked" when it is not.
+- Fix and check again, at most 3 rounds. (Research: checking with the real library and repairing from its error raised the share of generated diagrams that draw from about 70% to 95%.) Still failing → say so honestly, with the error; never hand over a diagram as "checked" when it is not.
 - The check parses but does not draw. A few problems show only when drawing; the viewer then adds the error to the comments automatically, and the next rework fixes it.
 
 ## 4. Flowchart (and graphs)
@@ -93,6 +97,7 @@ swimlane-beta
 - Groups of participants: `box Name` … `end`, name only, no colour (`box transparent Name` when the name could be read as a colour).
 - Roles only on message bands: write `%% role_<name>` on the line directly before `rect rgb(…)`. The colour after `rect` is only for other viewers; the viewer replaces it. Bands: error, warning, timing, safe, suggestion. A band may wrap messages or a whole block (`alt`, `loop`, `break`). Use few bands (about three per diagram), for the paths that matter most: errors, timeouts, retries.
 - `;` in message text must be `#59;`.
+- `create participant` / `destroy`: only the receiver of a message can be created; a destroyed participant needs a message that destroys it.
 - One scenario per diagram (main path plus its error branches). When the user asks for two scenarios (e.g. joining and sending data), two diagrams with clear names (`sensor-link-join_sequence`, `sensor-link-data_sequence`) are fine; say so in the hand-over.
 
 ## 7. State
@@ -118,7 +123,7 @@ swimlane-beta
 ## 9. Class
 
 - `classDiagram`. Names: letters, digits, `_`, `-`.
-- Members: with `()` a method (return type after `)`), otherwise an attribute; visibility `+ - # ~`; `$` static, `*` abstract. Generics `List~int~`.
+- Members: with `()` a method (return type after `)`), otherwise an attribute; visibility `+ - # ~`; `$` static, `*` abstract. Generics `List~int~` (no comma inside generics). Show only the members that matter for the diagram's question.
 - Relations: `<|--` inheritance, `*--` composition, `o--` aggregation, `-->` association, `..>` dependency, `..|>` realization; cardinality `"1" --> "*"`.
 - Annotations `<<interface>>`, `<<abstract>>`, `<<enumeration>>`.
 - Roles on their own line (`class Sensor:::role_hardware` or `cssClass`), never on a relation line.
@@ -128,7 +133,7 @@ swimlane-beta
 
 - `packet`. Fields `0-15: "Source port"`, single bit `16: "ACK"`, or the width form `+16: "Source port"` (easier to keep right).
 - Lowest bit first; fields contiguous without gaps or overlaps (fill holes with a reserved field). The check script verifies this.
-- 32 bits per row by default. No roles or colours.
+- 32 bits per row by default. Bits are numbered from 0 on the left (the RFC style); use the descending bit order only when the text numbers bits from the right. No roles or colours.
 
 ## 11. XY chart
 
@@ -140,7 +145,7 @@ swimlane-beta
 
 ## 12. Types not used
 
-- `architecture` (beta in 12.1, no roles), `sankey` (decided: not used). Candidates for later: treemap, Gantt, block, requirement.
+- `architecture` (beta in 12.1, no roles), `sankey` (decided: not used). Candidates for later: treemap, Gantt (only 4 task kinds, no free roles), block (layout was unreliable in our test: overlapping blocks), requirement (elements and requirements can take roles).
 
 ## 13. Choosing the diagram type
 
@@ -158,3 +163,10 @@ swimlane-beta
 
 - A network protocol usually needs three views: sequence (the exchange), state (each endpoint), packet (the frame).
 - Propose the 1–2 most useful first; mention the others.
+
+## 14. Sources
+
+- Mermaid documentation, mermaid.js.org: [flowchart](https://mermaid.js.org/syntax/flowchart.html), [sequence](https://mermaid.js.org/syntax/sequenceDiagram.html), [state](https://mermaid.js.org/syntax/stateDiagram.html), [ER](https://mermaid.js.org/syntax/entityRelationshipDiagram.html), [class](https://mermaid.js.org/syntax/classDiagram.html), [packet](https://mermaid.js.org/syntax/packet.html), [architecture](https://mermaid.js.org/syntax/architecture.html), [swimlane](https://mermaid.js.org/syntax/swimlanes.html), [XY chart](https://mermaid.js.org/syntax/xyChart.html); [release notes](https://github.com/mermaid-js/mermaid/releases).
+- Our own tests in the Idea-Visualizer project (2026-10-07 to 2026-10-14), marked "tested" with a date above.
+- Research: [HU Berlin, LLM-supported diagram generator and code validation](https://llm-enabled-development-41d6d8.pages.cms.hu-berlin.de/en/experiments/diagram/diagram-short); [arXiv, LLM debugging of Mermaid sequence errors](https://arxiv.org/pdf/2604.23027).
+- Community guides: [Tessl review of a Mermaid skill](https://tessl.io/registry/skills/github/pantheon-org/tekhne/mermaid-diagrams/review), [LongTermWiki style guide](https://www.longtermwiki.com/internal/mermaid-diagrams), [ai-flow-dev guidelines](https://cdn.jsdelivr.net/npm/ai-flow-dev@2.9.1/prompts/shared/mermaid-guidelines.md), [Optum diagramming style](https://awesome-llm-stg.optum.com/assets/instructions/mermaid-diagramming-style), [haowjy mermaid skill](https://skills.sh/haowjy/orchestrate/mermaid), [Visual Paradigm: alternatives and loops](https://skills.visual-paradigm.com/?p=1694), [sequence diagrams for detailed design](https://book.st-hakky.com/en/business/efficient-detailed-design-sequence-diagram).

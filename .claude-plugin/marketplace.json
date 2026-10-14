@@ -9,7 +9,7 @@
       "name": "visualize-idea",
       "source": "./plugins/visualize-idea",
       "description": "Turns a specification or any text into Mermaid diagrams for the Idea Visualizer viewer, and improves the text from your diagram comments.",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }
